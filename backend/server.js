@@ -2,24 +2,30 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const cartRoutes = require('./routes/cartRoutes'); // Assuming you saved the routes in a folder named routes
+const cartRoutes = require('./routes/cartRoutes'); // Assuming routes are defined in ./routes/cartRoutes
+require('dotenv').config(); // Load environment variables from .env
 
 const app = express();
 
 // Middleware
 app.use(cors());
-app.use(bodyParser.json()); // For parsing application/json
+app.use(bodyParser.json()); // For parsing JSON bodies
 
 // Database Connection
-mongoose.connect('mongodb://localhost:27017/yourDatabaseName', {
+const mongoURI = process.env.MONGO_URI;
+
+mongoose.connect(mongoURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
   .then(() => console.log('Connected to MongoDB'))
-  .catch(error => console.error('Error connecting to MongoDB:', error));
+  .catch(error => {
+    console.error('Error connecting to MongoDB:', error);
+    process.exit(1); // Exit process with failure
+  });
 
 // Routes
-app.use('/api/cart', cartRoutes); // Cart routes mounted under /api/cart
+app.use('/api/cart', cartRoutes); // Mount cart routes under /api/cart
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
