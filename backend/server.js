@@ -1,34 +1,34 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 const cors = require('cors');
-require('dotenv').config();
+const cartRoutes = require('./routes/cartRoutes'); // Assuming you saved the routes in a folder named routes
 
 const app = express();
 
 // Middleware
-app.use(express.json());
 app.use(cors());
+app.use(bodyParser.json()); // For parsing application/json
 
-// Test Route
-app.get('/', (req, res) => res.json({msg: 'Backend is running'}));
+// Database Connection
+mongoose.connect('mongodb://localhost:27017/yourDatabaseName', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(error => console.error('Error connecting to MongoDB:', error));
 
-// routes
-const authRoutes = require('./routes/authRoutes');
-app.use('/api/auth', authRoutes);
+// Routes
+app.use('/api/cart', cartRoutes); // Cart routes mounted under /api/cart
 
-const productRoutes = require('./routes/productRoutes');
-app.use('/api/products', productRoutes);
+// Error Handling Middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: 'Something went wrong', error: err.message });
+});
 
-const repairRoutes = require('./routes/repairRoutes');
-app.use('/api/repairs', repairRoutes);
-
-const orderRoutes = require('./routes/orderRoutes');
-app.use('/api/orders', orderRoutes);
-
-
-
-
-
-// Start Server
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`Server running on port ${4000}`));
+// Server Setup
+const port = process.env.PORT || 5000;
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});

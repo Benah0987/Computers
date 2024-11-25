@@ -1,7 +1,8 @@
 const express = require('express');
 const bcrypt = require('bcryptjs'); // For hashing passwords
 const jwt = require('jsonwebtoken'); // For generating JWT tokens
-const User = require('../models/userModel'); // Assuming a User model is defined
+const User = require('../models/userModel');
+
 const router = express.Router();
 
 // Secret key for JWT
