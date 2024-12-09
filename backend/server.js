@@ -8,14 +8,13 @@ require('dotenv').config();
 // Import Routes
 const cartRoutes = require('./routes/cartRoutes');
 const authRoutes = require('./routes/authRoutes');
+const productRoutes = require('./routes/productRoutes'); // Add productRoutes
 
 const app = express();
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json()); // Parse JSON bodies
-
-// Use the 'combined' format for detailed request logs
 app.use(morgan('combined')); // Logs method, URL, status, and more
 
 // Database Connection
@@ -34,6 +33,7 @@ mongoose.connect(mongoURI, {
 // Routes
 app.use('/api/cart', cartRoutes); // Mount cart routes under /api/cart
 app.use('/api/auth', authRoutes); // Mount auth routes under /api/auth
+app.use('/api/products', productRoutes); // Mount product routes under /api/products
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
